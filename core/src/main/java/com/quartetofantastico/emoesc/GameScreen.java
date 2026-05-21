@@ -63,6 +63,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
         avatar.update(delta);
 
+        crocodile.update(delta);
+        tiger.update(delta);
+
         camera.position.set(avatar.position.x, avatar.position.y, 0);
         camera.update();
 
