@@ -1,4 +1,6 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.interfaceUser;
+
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 
 public class Player {
     Constants CONST= new Constants();

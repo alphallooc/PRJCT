@@ -1,4 +1,4 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.logicAndMechanic;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,6 +27,13 @@ public abstract class Entity{
         );
     }
 
+    public float getVector2PositionX(){
+        return position.x;
+    }
+
+    public float getVector2PositionY(){
+        return position.y;
+    }
     public abstract void update(float delta);
     public abstract void draw (ShapeRenderer _renderer);
 

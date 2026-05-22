@@ -1,9 +1,10 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.world;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
+import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
 
 public abstract class Animals extends Entity {
     Constants CONST = new Constants();
@@ -132,7 +133,7 @@ public abstract class Animals extends Entity {
     public static abstract class Friendly extends Animals {
         public Friendly(Vector2 _position, float _xSize, float _ySize) { super(_position, _xSize, _ySize); }
         public static class Dog extends Friendly{
-            Dog(Vector2 _position){super(_position, 1.2f,0.5f);}
+            public Dog(Vector2 _position){super(_position, 1.2f,0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer){
 
@@ -442,7 +443,7 @@ public abstract class Animals extends Entity {
             }
         }
         public static class Giraffe extends Restricted {
-            Giraffe(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Giraffe(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
