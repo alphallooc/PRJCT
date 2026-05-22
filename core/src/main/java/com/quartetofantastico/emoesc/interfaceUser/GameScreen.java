@@ -58,11 +58,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-       // viewport.apply(true);
-
         Gdx.gl.glClearColor(CONST.BLUE_COLOR_FLOAT, CONST.TRANSPARENT_COLOR_FLOAT, CONST.TRANSPARENT_COLOR_FLOAT, CONST.TRANSPARENT_COLOR_FLOAT);
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
+
         avatar.update(delta);
+
+        tiger.update(delta);
+        crocodile.update(delta);
+        leopard.update(delta);
+        dog.update(delta);
+        giraffe.update(delta);
 
         camera.position.set(avatar.getVector2PositionX(), avatar.getVector2PositionY(), 0);
         camera.update();
@@ -72,6 +77,9 @@ public class GameScreen implements Screen {
         render.begin(ShapeRenderer.ShapeType.Filled);
         crocodile.draw(render);
         tiger.draw(render);
+        leopard.draw(render);
+        dog.draw(render);
+        giraffe.draw(render);
         avatar.draw(render);
         render.end();
     }

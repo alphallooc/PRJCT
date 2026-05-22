@@ -1,9 +1,10 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.world;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
+import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import java.util.Random;
 
 
@@ -40,9 +41,12 @@ public abstract class Animals extends Entity {
     public void update(float _deltaTime) {
         long tempoAtual = System.currentTimeMillis();
 
+        System.out.println("deltaTime: " + _deltaTime + " | movimento calculado: " + (velocidade * _deltaTime));
+
         if ((tempoAtual - timer) > 2000) {
             direcaodaVelocidade = random.nextInt(4);
             timer = tempoAtual;
+            System.out.println("Mudou direção para: " + direcaodaVelocidade);
         }
 
         float movimento = velocidade * _deltaTime;
@@ -175,7 +179,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Dog extends Friendly {
-            Dog(Vector2 _position) {
+           public Dog(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -238,7 +242,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Cat extends Friendly {
-            Cat(Vector2 _position) {
+            public Cat(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -301,7 +305,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Horse extends Friendly {
-            Horse(Vector2 _position) {
+            public Horse(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -361,7 +365,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Gorilla extends Restricted {
-            Gorilla(Vector2 _position) {
+            public Gorilla(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -415,7 +419,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Elephant extends Restricted {
-            Elephant(Vector2 _position) {
+            public Elephant(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -469,7 +473,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Giraffe extends Restricted {
-            Giraffe(Vector2 _position) {
+            public Giraffe(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -529,7 +533,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Rabbit extends Neutral {
-            Rabbit(Vector2 _position) {
+           public Rabbit(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -583,7 +587,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Turtle extends Neutral {
-            Turtle(Vector2 _position) {
+           public Turtle(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -629,7 +633,7 @@ public abstract class Animals extends Entity {
         }
 
         public static class Bird extends Neutral {
-            Bird(Vector2 _position) {
+           public Bird(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
@@ -672,6 +676,7 @@ public abstract class Animals extends Entity {
                     0.1f * CONST.SCALE,
                     0.2f * CONST.SCALE);
             }
+
         }
     }
 }
