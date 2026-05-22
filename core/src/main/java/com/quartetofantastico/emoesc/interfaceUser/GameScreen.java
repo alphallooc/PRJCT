@@ -1,4 +1,4 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.interfaceUser;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
+import com.quartetofantastico.emoesc.world.Animals;
+import com.quartetofantastico.emoesc.world.Avatar;
 
 public class GameScreen implements Screen {
     Constants CONST = new Constants();
@@ -63,10 +64,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
         avatar.update(delta);
 
-        crocodile.update(delta);
-        tiger.update(delta);
-
-        camera.position.set(avatar.position.x, avatar.position.y, 0);
+        camera.position.set(avatar.getVector2PositionX(), avatar.getVector2PositionY(), 0);
         camera.update();
 
         render.setProjectionMatrix(camera.combined);
