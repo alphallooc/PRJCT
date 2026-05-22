@@ -1,6 +1,4 @@
-package com.quartetofantastico.emoesc;
-
-import com.badlogic.gdx.ApplicationAdapter;
+package com.quartetofantastico.emoesc.logicAndMechanic;
 
 public class Stage {
     private String name;

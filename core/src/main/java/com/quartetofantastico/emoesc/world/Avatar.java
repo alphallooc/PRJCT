@@ -1,12 +1,14 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.world;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
+import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
 
-public class Avatar extends Entity{
+public class Avatar extends Entity {
     Constants CONST = new Constants();
 
     private String name;

@@ -1,4 +1,4 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.logicAndMechanic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;

@@ -1,4 +1,4 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.interfaceUser;
 
 import com.badlogic.gdx.Screen;
 
