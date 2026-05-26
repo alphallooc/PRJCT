@@ -201,7 +201,7 @@ public abstract class Animals extends Entity {
             }
         }
         public static class Cat extends Friendly{
-            Cat(Vector2 _position){super(_position, 1.2f,0.5f);}
+            public Cat(Vector2 _position){super(_position, 1.2f,0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -268,7 +268,7 @@ public abstract class Animals extends Entity {
             }
         }
         public class Horse extends Friendly {
-            Horse(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Horse(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -329,7 +329,7 @@ public abstract class Animals extends Entity {
     public static abstract class Restricted extends Animals {
         public Restricted(Vector2 _position, float _xSize, float _ySize) { super(_position, _xSize, _ySize); }
         public static class Gorilla extends Restricted {
-            Gorilla(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Gorilla(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -386,7 +386,7 @@ public abstract class Animals extends Entity {
             }
         }
         public static class Elephant extends Restricted {
-            Elephant(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Elephant(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -504,7 +504,7 @@ public abstract class Animals extends Entity {
     public static abstract class Neutral extends Animals {
          Neutral (Vector2 _position, float _xSize, float _ySize) { super(_position, _xSize, _ySize); }
         public static class Rabbit extends Neutral {
-            Rabbit(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Rabbit(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -561,7 +561,7 @@ public abstract class Animals extends Entity {
             }
         }
         public static class Turtle extends Neutral {
-            Turtle(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Turtle(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -609,7 +609,7 @@ public abstract class Animals extends Entity {
             }
         }
         public static class Bird extends Neutral {
-            Bird(Vector2 _position) {super(_position, 1.2f, 0.5f);}
+            public Bird(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {
                 //corpo
@@ -658,4 +658,4 @@ public abstract class Animals extends Entity {
         }
     }
 }
-//essa classe é responsável pelos npcs;
+//essa classe é responsável pelos npcs movidos por IA;
