@@ -1,26 +1,35 @@
-package com.quartetofantastico.emoesc;
+package com.quartetofantastico.emoesc.world;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-
+import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
+import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import java.util.Random;
 
 
 public abstract class Animals extends Entity {
-    public float velocidade = 5f;
+    public float velocidade = 50f;
     public long timer = 0;
     Constants CONST = new Constants();
     Rectangle bounds;
 
     private Random random = new Random();
     public int direcaodaVelocidade = 0;
+
     Animals(Vector2 _position, float _xSize, float _ySize) {
         super(_position, _xSize, _ySize);
         this.position = _position;
         this.xSize = _xSize;
         this.ySize = _ySize;
+        this.bounds = new Rectangle(
+            _position.x + CONST.ANIMATED_OBJECT_MARGIN,
+            _position.y + CONST.ANIMATED_OBJECT_MARGIN,
+            _xSize,
+            _ySize
+        );
+        this.timer = System.currentTimeMillis();
+        this.direcaodaVelocidade = random.nextInt(4);
     }
 
     @Override
@@ -29,20 +38,27 @@ public abstract class Animals extends Entity {
     }
 
     @Override
-    public void update(float _update) {
+    public void update(float _deltaTime) {
         long tempoAtual = System.currentTimeMillis();
+
+        System.out.println("deltaTime: " + _deltaTime + " | movimento calculado: " + (velocidade * _deltaTime));
 
         if ((tempoAtual - timer) > 2000) {
             direcaodaVelocidade = random.nextInt(4);
             timer = tempoAtual;
+            System.out.println("Mudou direção para: " + direcaodaVelocidade);
         }
 
+        float movimento = velocidade * _deltaTime;
+
         switch(direcaodaVelocidade) {
-            case 0: position.y += 20; break;
-            case 1: position.y -= 20; break;
-            case 2: position.x -= 20; break;
-            case 3: position.x += 20; break;
+            case 0: position.y += movimento; break;
+            case 1: position.y -= movimento; break;
+            case 2: position.x -= movimento; break;
+            case 3: position.x += movimento; break;
         }
+
+        updateBounds();
     }
 
     public static abstract class Hostil extends Animals {
@@ -57,19 +73,16 @@ public abstract class Animals extends Entity {
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                // Corpo
                 _renderer.setColor(CONST.ORANGE_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     1.2f * CONST.SCALE,
                     0.5f * CONST.SCALE);
 
-                // Cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y + 0.35f * CONST.SCALE,
                     0.25f * CONST.SCALE);
 
-                // Listras
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y,
@@ -80,7 +93,6 @@ public abstract class Animals extends Entity {
                     0.05f * CONST.SCALE,
                     0.5f * CONST.SCALE);
 
-                // Olho
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
@@ -98,17 +110,14 @@ public abstract class Animals extends Entity {
                 _renderer.set(ShapeRenderer.ShapeType.Filled);
                 _renderer.setColor(CONST.GREEN_COLOR);
 
-                // Corpo (Lógico: 1.2 unidades de largura, 0.4 de altura * escala)
                 _renderer.rect(position.x + 7,
                     position.y + 5, 1 * CONST.SCALE,
                     0.2f * CONST.SCALE);
 
-                // Cabeça (Lógico: raio 0.2 * escala)
                 _renderer.circle(position.x + (1.3f * CONST.SCALE),
                     position.y + (0.2f * CONST.SCALE),
                     0.2f * CONST.SCALE);
 
-                // Olho
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + (1.4f * CONST.SCALE),
                     position.y + (0.3f * CONST.SCALE),
@@ -123,19 +132,16 @@ public abstract class Animals extends Entity {
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                // Tronco
                 _renderer.setColor(CONST.YELLOW_COLOR);
                 _renderer.rect(position.x,
                     position.y + 0.25f * CONST.SCALE,
                     1.35f * CONST.SCALE,
                     0.5f * CONST.SCALE);
 
-                // Cabeça
                 _renderer.circle(position.x + 1.5f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
                     0.24f * CONST.SCALE);
 
-                // Membros
                 _renderer.rect(position.x + 0.15f * CONST.SCALE,
                     position.y,
                     0.1f * CONST.SCALE,
@@ -153,7 +159,6 @@ public abstract class Animals extends Entity {
                     0.1f * CONST.SCALE,
                     0.25f * CONST.SCALE);
 
-                // Manchas
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 0.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
@@ -174,25 +179,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Dog extends Friendly {
-            Dog(Vector2 _position) {
+           public Dog(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -201,24 +202,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -233,7 +230,6 @@ public abstract class Animals extends Entity {
                     0.1f * CONST.SCALE,
                     0.2f * CONST.SCALE);
 
-                // 🟫 Cauda
                 _renderer.triangle(
                     position.x - 0.1f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
@@ -246,24 +242,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Cat extends Friendly {
-            Cat(Vector2 _position) {
+            public Cat(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -272,24 +265,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -304,7 +293,6 @@ public abstract class Animals extends Entity {
                     0.1f * CONST.SCALE,
                     0.2f * CONST.SCALE);
 
-                //Cauda
                 _renderer.triangle(
                     position.x - 0.1f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
@@ -316,25 +304,22 @@ public abstract class Animals extends Entity {
             }
         }
 
-        public class Horse extends Friendly {
-            Horse(Vector2 _position) {
+        public static class Horse extends Friendly {
+            public Horse(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -343,24 +328,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -384,24 +365,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Gorilla extends Restricted {
-            Gorilla(Vector2 _position) {
+            public Gorilla(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -410,24 +388,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -445,24 +419,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Elephant extends Restricted {
-            Elephant(Vector2 _position) {
+            public Elephant(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -471,24 +442,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -506,24 +473,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Giraffe extends Restricted {
-            Giraffe(Vector2 _position) {
+            public Giraffe(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -532,24 +496,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -573,24 +533,21 @@ public abstract class Animals extends Entity {
         }
 
         public static class Rabbit extends Neutral {
-            Rabbit(Vector2 _position) {
+           public Rabbit(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //orelhas
                 _renderer.setColor(CONST.DARK_GRAY_COLOR);
                 _renderer.triangle(position.x + 1.4f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE,
@@ -599,24 +556,20 @@ public abstract class Animals extends Entity {
                     position.x + 1.6f * CONST.SCALE,
                     position.y + 0.6f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -634,41 +587,35 @@ public abstract class Animals extends Entity {
         }
 
         public static class Turtle extends Neutral {
-            Turtle(Vector2 _position) {
+           public Turtle(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.GREEN_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.GREEN_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -686,41 +633,35 @@ public abstract class Animals extends Entity {
         }
 
         public static class Bird extends Neutral {
-            Bird(Vector2 _position) {
+           public Bird(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
-                //corpo
                 _renderer.setColor(CONST.YELLOW_COLOR);
                 _renderer.rect(position.x,
                     position.y,
                     xSize * CONST.SCALE,
                     ySize * CONST.SCALE);
 
-                //cabeça
                 _renderer.circle(position.x + 1.3f * CONST.SCALE,
                     position.y, +0.35f * CONST.SCALE);
 
-                //olhos
                 _renderer.setColor(CONST.WHITE_COLOR);
                 _renderer.circle(position.x + 1.35f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.05f * CONST.SCALE);
 
-                //pupila
                 _renderer.setColor(CONST.BLACK_COLOR);
                 _renderer.circle(position.x + 1.37f * CONST.SCALE,
                     position.y + 0.4f * CONST.SCALE,
                     0.02f * CONST.SCALE);
 
-                //nariz
                 _renderer.circle(position.x + 1.55f * CONST.SCALE,
                     position.y + 0.3f * CONST.SCALE,
                     0.04f * CONST.SCALE);
 
-                //pernas
                 _renderer.setColor(CONST.YELLOW_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
@@ -735,7 +676,7 @@ public abstract class Animals extends Entity {
                     0.1f * CONST.SCALE,
                     0.2f * CONST.SCALE);
             }
+
         }
     }
 }
-//essa classe é responsável pelos npcs;
