@@ -8,17 +8,33 @@ import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
 
 public abstract class Animals extends Entity {
     Constants CONST = new Constants();
-    Rectangle bounds;
 
+    protected float dirX = 1f;
+    protected float speed = CONST.MIN_SPEED;
     Animals(Vector2 _position, float _xSize, float _ySize ){
         super(_position, _xSize, _ySize);
         this.position = _position;
         this.xSize = _xSize;
         this.ySize = _ySize;
     }
-
-    @Override public void updateBounds(){bounds.setPosition(position.x+CONST.ANIMATED_OBJECT_MARGIN, position.y+CONST.ANIMATED_OBJECT_MARGIN);}
-    @Override public void update(float _update){}
+    @Override public void update(float _update){
+        float nextX = position.x+dirX*speed*_update;
+        applyGravity(_update);
+        if(!isGrounded) return;
+        nextX = position.x + xSize;
+        if(collidesWithWalls(nextX, position.y, walls)){
+            dirX =-dirX;
+            return;
+        }
+        float ledgeCheckX = (dirX>0)? position.x+xSize+1    :   position.x-1;
+        boolean floorAhead = collidesWithWalls(ledgeCheckX, position.y-1, walls);
+        if(!floorAhead){
+            dirX =-dirX;
+            return;
+        }
+        position.x=nextX;
+        updateBounds();
+    }
 
     public static abstract class Hostil extends Animals {
         Hostil(Vector2 _position, float _xSize, float _ySize){super(_position, _xSize, _ySize);}
@@ -267,7 +283,7 @@ public abstract class Animals extends Entity {
                 );
             }
         }
-        public class Horse extends Friendly {
+        public static class Horse extends Friendly {
             public Horse(Vector2 _position) {super(_position, 1.2f, 0.5f);}
 
             @Override public void draw(ShapeRenderer _renderer) {

@@ -15,11 +15,10 @@ public class Avatar extends Entity {
     private int id, jump, health;
     float tamanho = 1.0f * CONST.SCALE;// Escala aplicada conforme solicitado
     float olhoTamanho = 0.15f * CONST.SCALE;
-    float speed = 50.0f; // Velocidade aumentada devido à escala do mundo
+    float speed = CONST.MAX_SPEED; // Velocidade aumentada devido à escala do mundo
     int dirX = 0, dirY = 0;
 
-    Array entities = new Array<>();
-    Rectangle bounds;
+    Array <Entity> entities = new Array<>();
 
     public Avatar(String _name, Vector2 _position) {
         super( _position, 1.0f, 1.0f);
@@ -28,13 +27,8 @@ public class Avatar extends Entity {
         this.health = 100;
         this.position.x = _position.x;
         this.position.y = _position.y;
-
-
-        bounds = new Rectangle(_position.x+CONST.ANIMATED_OBJECT_MARGIN,
-            _position.y+CONST.ANIMATED_OBJECT_MARGIN,
-            tamanho+CONST.ANIMATED_OBJECT_MARGIN,
-            tamanho-CONST.ANIMATED_OBJECT_MARGIN);
     }
+
     public void draw(ShapeRenderer _draw) {
 
         float baseOlhoX = position.x + (tamanho / 2);
