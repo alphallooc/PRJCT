@@ -9,31 +9,28 @@ import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
 
 public class Avatar extends Entity {
+    private float invencibilidade = 0f;
     Constants CONST = new Constants();
-
     private String name;
     private int id, jump, health;
-    float tamanho = 1.0f * CONST.SCALE;// Escala aplicada conforme solicitado
-    float olhoTamanho = 0.15f * CONST.SCALE;
-    float speed = 50.0f; // Velocidade aumentada devido à escala do mundo
+    float tamanho; // ← sem valor aqui
+    float olhoTamanho;
+    float speed = 50.0f;
     int dirX = 0, dirY = 0;
-
-    Array entities = new Array<>();
-    Rectangle bounds;
+    public Array entities = new Array<>();
 
     public Avatar(String _name, Vector2 _position) {
-        super( _position, 1.0f, 1.0f);
-
+        super(_position, 1.0f * Constants.SCALE, 1.0f * Constants.SCALE);
+        tamanho = 1.0f * Constants.SCALE; // ← calcula aqui dentro
+        olhoTamanho = 0.15f * Constants.SCALE; // ← aqui também
         this.name = _name;
         this.health = 100;
-        this.position.x = _position.x;
-        this.position.y = _position.y;
-
-
-        bounds = new Rectangle(_position.x+CONST.ANIMATED_OBJECT_MARGIN,
-            _position.y+CONST.ANIMATED_OBJECT_MARGIN,
-            tamanho+CONST.ANIMATED_OBJECT_MARGIN,
-            tamanho-CONST.ANIMATED_OBJECT_MARGIN);
+        bounds = new Rectangle(
+            _position.x,
+            _position.y,
+            tamanho,
+            tamanho
+        );
     }
     public void draw(ShapeRenderer _draw) {
 
@@ -57,14 +54,13 @@ public class Avatar extends Entity {
             olhoTamanho); // Olho direito
     }
     public void update(float delta) {
+        if (invencibilidade > 0) invencibilidade -= delta;
         dirX = 0;
         dirY = 0;
-
         if (CONST.UP_KEY()) dirY = 1;
         if (CONST.DOWN_KEY()) dirY = -1;
         if (CONST.LEFT_KEY()) dirX = -1;
         if (CONST.RIGHT_KEY()) dirX = 1;
-
         move(dirX * speed * delta, dirY * speed * delta, entities);
     }
     public void move(float _nextX, float _nextY, Array<Entity> entities) {
@@ -82,6 +78,12 @@ public class Avatar extends Entity {
         if (!collides(position.x, nextY, entities)) position.y = nextY;
         updateBounds();
     }
+
+    @Override
+    public void updateBounds() {
+        bounds.setPosition(position.x, position.y);
+    }
+
     public String getName() { return name; }
     public int getHealth() { return health; }
 
@@ -99,4 +101,12 @@ public class Avatar extends Entity {
     public void decreaseSpeed(int _speed) { this.speed -= _speed; }
     public void increaseJump() { this.jump = CONST.HIGH_JUMP; }
     public void decreaseJump() { this.jump = CONST.NORMAL_JUMP; }
+
+    public boolean podeTomarDano() {
+        return invencibilidade <= 0;
+    }
+
+    public void ativarInvencibilidade() {
+        invencibilidade = 1.0f;
+    }
 }

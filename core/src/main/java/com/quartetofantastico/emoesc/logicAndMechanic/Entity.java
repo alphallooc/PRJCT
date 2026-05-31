@@ -18,13 +18,7 @@ public abstract class Entity{
         this.position = _position;
         this.xSize = _xSize;
         this.ySize = _ySize;
-
-        bounds = new Rectangle(
-            position.x + CONST.ANIMATED_OBJECT_MARGIN,
-            position.y + CONST.ANIMATED_OBJECT_MARGIN,
-            xSize - 2 * CONST.ANIMATED_OBJECT_MARGIN,
-            ySize - 2 * CONST.ANIMATED_OBJECT_MARGIN
-        );
+        bounds = new Rectangle(position.x, position.y, xSize, ySize);
     }
 
     public float getVector2PositionX(){
@@ -40,15 +34,17 @@ public abstract class Entity{
     public void updateBounds(){bounds.setPosition(position.x+CONST.ANIMATED_OBJECT_MARGIN, position.y+CONST.ANIMATED_OBJECT_MARGIN);}
 
     public boolean collides(float nextX, float nextY, Array<Entity> entities){
-        Rectangle nextBounds = new Rectangle(nextX+CONST.ANIMATED_OBJECT_MARGIN,
-            nextY+CONST.ANIMATED_OBJECT_MARGIN,
-            xSize-CONST.ANIMATED_OBJECT_MARGIN,
-            ySize-CONST.ANIMATED_OBJECT_MARGIN);
-
+        Rectangle nextBounds = new Rectangle(
+            nextX,
+            nextY,
+            xSize,
+            ySize
+        );
         for (Entity other : entities){
-            if (other == this)  continue;
+            if (other == this) continue;
             if (nextBounds.overlaps(other.bounds)) return true;
         }
         return false;
-    };
+    }
+    public Rectangle getBounds() { return bounds; }
 }

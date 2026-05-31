@@ -12,21 +12,20 @@ public abstract class Animals extends Entity {
     public float velocidade = 50f;
     public long timer = 0;
     Constants CONST = new Constants();
-    Rectangle bounds;
 
     private Random random = new Random();
     public int direcaodaVelocidade = 0;
 
     Animals(Vector2 _position, float _xSize, float _ySize) {
-        super(_position, _xSize, _ySize);
+        super(_position, _xSize * Constants.SCALE, _ySize * Constants.SCALE);
         this.position = _position;
-        this.xSize = _xSize;
-        this.ySize = _ySize;
+        this.xSize = _xSize;  // ← sem SCALE, o draw já aplica
+        this.ySize = _ySize;  // ← sem SCALE, o draw já aplica
         this.bounds = new Rectangle(
-            _position.x + CONST.ANIMATED_OBJECT_MARGIN,
-            _position.y + CONST.ANIMATED_OBJECT_MARGIN,
-            _xSize,
-            _ySize
+            _position.x,
+            _position.y,
+            _xSize * Constants.SCALE,
+            _ySize * Constants.SCALE
         );
         this.timer = System.currentTimeMillis();
         this.direcaodaVelocidade = random.nextInt(4);
@@ -34,19 +33,16 @@ public abstract class Animals extends Entity {
 
     @Override
     public void updateBounds() {
-        bounds.setPosition(position.x + CONST.ANIMATED_OBJECT_MARGIN, position.y + CONST.ANIMATED_OBJECT_MARGIN);
+        bounds.setPosition(position.x, position.y);
     }
 
     @Override
     public void update(float _deltaTime) {
         long tempoAtual = System.currentTimeMillis();
 
-        System.out.println("deltaTime: " + _deltaTime + " | movimento calculado: " + (velocidade * _deltaTime));
-
         if ((tempoAtual - timer) > 2000) {
             direcaodaVelocidade = random.nextInt(4);
             timer = tempoAtual;
-            System.out.println("Mudou direção para: " + direcaodaVelocidade);
         }
 
         float movimento = velocidade * _deltaTime;
@@ -68,8 +64,9 @@ public abstract class Animals extends Entity {
 
         public static class Tiger extends Hostil {
             public Tiger(Vector2 _position) {
-                super(_position, 0.8f, 0f);
+                super(_position, 1.2f, 0.5f);
             }
+            public int getDano() { return 30; }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
@@ -102,8 +99,9 @@ public abstract class Animals extends Entity {
 
         public static class Crocodile extends Hostil {
             public Crocodile(Vector2 _position) {
-                super(_position, 10, 2);
+                super(_position, 1.2f, 0.5f);
             }
+            public int getDano() { return 25; }
 
             @Override
             public void draw(ShapeRenderer _renderer) {
@@ -129,6 +127,8 @@ public abstract class Animals extends Entity {
             public Leopard(Vector2 _position) {
                 super(_position, 1.2f, 0.5f);
             }
+
+            public int getDano() { return 20; }
 
             @Override
             public void draw(ShapeRenderer _renderer) {

@@ -3,6 +3,7 @@ package com.quartetofantastico.emoesc.interfaceUser;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +12,14 @@ import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import com.quartetofantastico.emoesc.world.Animals;
 import com.quartetofantastico.emoesc.world.Avatar;
 
+import com.badlogic.gdx.utils.Array;
+import com.quartetofantastico.emoesc.world.Frutas;
+
+
 public class GameScreen implements Screen {
+    BitmapFont font = new BitmapFont();
+    OrthographicCamera hudCamera;
+    Array<Frutas> frutas = new Array<>();
     Constants CONST = new Constants();
     Animals.Hostil.Tiger tiger;
     Animals.Hostil.Crocodile crocodile;
@@ -47,13 +55,27 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
 
         avatar = new Avatar("Player", new Vector2(CONST.W_WORLD_SIZE / 2, CONST.H_WORLD_SIZE / 2));
-        tiger = new Animals.Hostil.Tiger(new Vector2((CONST.W_WORLD_SIZE / 2)-100, (CONST.H_WORLD_SIZE / 3)-100));
-        crocodile = new Animals.Hostil.Crocodile(new Vector2((CONST.W_WORLD_SIZE / 2)-150, (CONST.H_WORLD_SIZE /2)-150));
-        leopard = new Animals.Hostil.Leopard(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
+        tiger = new Animals.Hostil.Tiger(new Vector2(CONST.W_WORLD_SIZE/2 + 60, CONST.H_WORLD_SIZE/2));
+        crocodile = new Animals.Hostil.Crocodile(new Vector2(CONST.W_WORLD_SIZE/2 - 60, CONST.H_WORLD_SIZE/2));
+        leopard = new Animals.Hostil.Leopard(new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 + 60));
         dog = new Animals.Friendly.Dog(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
 
         giraffe = new Animals.Restricted.Giraffe (new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
         camera.setToOrtho(false, CONST.W_SCREEN, CONST.H_SCREEN);
+
+        frutas.add(new Frutas(Frutas.FruitType.MAÇA,   new Vector2(CONST.W_WORLD_SIZE/2 + 200, CONST.H_WORLD_SIZE/2)));
+        frutas.add(new Frutas(Frutas.FruitType.BANANA,  new Vector2(CONST.W_WORLD_SIZE/2 - 200, CONST.H_WORLD_SIZE/2)));
+        frutas.add(new Frutas(Frutas.FruitType.LARANJA, new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 + 200)));
+        frutas.add(new Frutas(Frutas.FruitType.UVA,     new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 - 200)));
+
+        hudCamera = new OrthographicCamera();
+        hudCamera.setToOrtho(false, CONST.W_SCREEN, CONST.H_SCREEN);
+
+        avatar.entities.add(tiger);
+        avatar.entities.add(crocodile);
+        avatar.entities.add(leopard);
+        avatar.entities.add(dog);
+        avatar.entities.add(giraffe);
     }
 
     @Override
@@ -74,14 +96,57 @@ public class GameScreen implements Screen {
 
         render.setProjectionMatrix(camera.combined);
 
+        for (Frutas fruta : frutas){
+            if (!fruta.isCollected() && avatar .getBounds().overlaps(fruta.getBounds())){
+                avatar.increaseHealth(fruta.getHealAmount());
+                fruta.setCollected(true);
+            }
+        }
+
+        if (avatar.podeTomarDano()) {
+            if (avatar.getBounds().overlaps(tiger.getBounds())) {
+                avatar.decreaseHealth(tiger.getDano());
+                avatar.ativarInvencibilidade();
+            }
+            if (avatar.getBounds().overlaps(crocodile.getBounds())) {
+                avatar.decreaseHealth(crocodile.getDano());
+                avatar.ativarInvencibilidade();
+            }
+            if (avatar.getBounds().overlaps(leopard.getBounds())) {
+                avatar.decreaseHealth(leopard.getDano());
+                avatar.ativarInvencibilidade();
+            }
+        }
+
         render.begin(ShapeRenderer.ShapeType.Filled);
         crocodile.draw(render);
         tiger.draw(render);
         leopard.draw(render);
         dog.draw(render);
         giraffe.draw(render);
+        for (Frutas fruta : frutas){
+            if (!fruta.isCollected()){
+                fruta.draw(render);
+            }
+        }
+
+
         avatar.draw(render);
         render.end();
+
+        render.begin(ShapeRenderer.ShapeType.Line);
+        render.setColor(CONST.RED_COLOR);
+        render.rect(tiger.getBounds().x, tiger.getBounds().y, tiger.getBounds().width, tiger.getBounds().height);
+        render.rect(crocodile.getBounds().x, crocodile.getBounds().y, crocodile.getBounds().width, crocodile.getBounds().height);
+        render.rect(leopard.getBounds().x, leopard.getBounds().y, leopard.getBounds().width, leopard.getBounds().height);
+        render.setColor(CONST.GREEN_COLOR);
+        render.rect(avatar.getBounds().x, avatar.getBounds().y, avatar.getBounds().width, avatar.getBounds().height);
+        render.end();
+
+        batch.setProjectionMatrix(hudCamera.combined);
+        batch.begin();
+        font.draw(batch, "HP: " + avatar.getHealth(), 20, CONST.H_SCREEN - 20);
+        batch.end();
     }
 
     @Override
