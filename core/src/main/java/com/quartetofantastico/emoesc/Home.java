@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.quartetofantastico.emoesc.interfaceUser.GameScreen;
-import com.quartetofantastico.emoesc.interfaceUser.OpScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Home extends Game{
@@ -19,7 +18,8 @@ public class Home extends Game{
        //batch = new SpriteBatch();
         //font=new BitmapFont();
         //image = new Texture("libgdx.png");
-        setScreen(new OpScreen(this));
+        setScreen(new GameScreen());
+        setScreen(new GameScreen());
     }
 
     @Override
