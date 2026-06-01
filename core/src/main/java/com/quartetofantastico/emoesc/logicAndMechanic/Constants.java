@@ -4,11 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 public class Constants{
+    //Valor de Ampliação:
+    public static final float SCALE=50f;
+
+    //Mundo:
     public static final int[][] Stage = new int[3][5];
     public static final float W_WORLD_SIZE=1920;
     public static final float H_WORLD_SIZE=1080;
 
-    //Cores{
+    //Cores:
     public static final Color WHITE_COLOR = Color.WHITE;
     public static final Color BLUE_COLOR = Color.BLUE;
     public static final Color GREEN_COLOR = Color.GREEN;
@@ -40,18 +44,20 @@ public class Constants{
     public static final float BLACK_COLOR_FLOAT = Color.BLACK.toFloatBits();
     public static final float WHITE_COLOR_FLOAT = Color.WHITE.toFloatBits();
     public static final float TRANSPARENT_COLOR_FLOAT = Color.CLEAR.toFloatBits();
-    //}
+
+    //Avatar e outros NPCs
     public static final float MIN_SPEED = 200f;
+    public static final float  ACCELERATION = 7500f;
     public static final float MAX_SPEED = 300f;
+    public static final float FRICTION = 5000f;
+    public static final float JUMP_VELOCITY = 500f;
+    public static final float MAX_JUMP_TIME = 0.50f;
     public static final int MAX_HEALTH = 100;
     public static final int MIN_HEALTH = 0;
     public static final int MAX_SCORE = 999999999;
-    public static final int NORMAL_JUMP=7;
-    public static final int HIGH_JUMP=9;
     public static final int W_SCREEN=1280;
     public static final int H_SCREEN=720;
-    public static final float ANIMATED_OBJECT_MARGIN=2f;
-    public static final float SCALE=50f;
+    public static final float ANIMATED_OBJECT_MARGIN=2f;;
     public static final float GRAVITY = -900f;
 
     public boolean UP_KEY(){

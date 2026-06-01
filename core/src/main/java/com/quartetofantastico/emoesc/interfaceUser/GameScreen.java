@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
         render = new ShapeRenderer();
         batch = new SpriteBatch();
 
-        avatar = new Avatar("Player", new Vector2(CONST.W_WORLD_SIZE, CONST.H_WORLD_SIZE));
+        avatar = new Avatar("Player", new Vector2(CONST.W_WORLD_SIZE / 2f, CONST.H_WORLD_SIZE / 2f));
         tiger = new Animals.Hostil.Tiger(new Vector2((CONST.W_WORLD_SIZE / 2)-100, (CONST.H_WORLD_SIZE / 3)-100));
         crocodile = new Animals.Hostil.Crocodile(new Vector2((CONST.W_WORLD_SIZE / 2)-150, (CONST.H_WORLD_SIZE /2)-150));
         leopard = new Animals.Hostil.Leopard(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
@@ -73,8 +73,8 @@ public class GameScreen implements Screen {
         float cameraHalfWidth = camera.viewportWidth / 2f;
         float cameraHalfHeight = camera.viewportHeight / 2f;
 
-        float targetX = avatar.getVector2PositionX();
-        float targetY = avatar.getVector2PositionY();
+        float targetX = avatar.getVector2PositionX()+avatar.getWidth();
+        float targetY = avatar.getVector2PositionY()+avatar.getHeight();
 
         float clampedX = Math.max(cameraHalfWidth, Math.min(targetX, CONST.W_WORLD_SIZE - cameraHalfWidth));
         float clampedY = Math.max(cameraHalfHeight, Math.min(targetY, CONST.H_WORLD_SIZE - cameraHalfHeight));
@@ -87,7 +87,7 @@ public class GameScreen implements Screen {
         render.begin(ShapeRenderer.ShapeType.Filled);
         // desenhar paredes aqui (se quiser vê-las)
         if (walls != null) {
-            render.setColor(1f, 1f, 1f, 1f);
+            render.setColor(CONST.GRAY_COLOR);
             for (Rectangle w : walls) {
                 render.rect(w.x, w.y, w.width, w.height);
             }
