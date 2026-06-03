@@ -9,19 +9,19 @@ import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
 
 public class Avatar extends Entity {
-    Constants CONST = new Constants();
 
     private String name;
-    private int id, jump, health;
-    float tamanho = 1.0f * CONST.SCALE;// Escala aplicada conforme solicitado
-    float olhoTamanho = 0.15f * CONST.SCALE;
-    float speed = CONST.MAX_SPEED; // Velocidade aumentada devido à escala do mundo
+    private int health;
+    float tamanho = Constants.SCALE;// Escala
+    float olhoTamanho = 0.15f * Constants.SCALE;
     int dirX = 0, dirY = 0;
     private float velX = 0f;
     private float velY = 0f;
     private boolean jumpAction;
     private float jumpTime=0;
     Array <Entity> entities = new Array<>();
+
+    Constants CONST = new Constants();
 
     public Avatar(String _name, Vector2 _position) {
         super(_position, Constants.SCALE, Constants.SCALE);
@@ -54,8 +54,7 @@ public class Avatar extends Entity {
             olharY,
             olhoTamanho); // Olho direito
     }
-    @Override
-    public void update(float delta) {
+    @Override public void update(float delta) {
         // ler entrada
         int inputX = 0;
         if (CONST.UP_KEY()) {} // manter se precisar pulo por tecla UP
@@ -65,11 +64,9 @@ public class Avatar extends Entity {
         // aceleração horizontal
         if (inputX != 0) {
             velX += inputX * CONST.ACCELERATION * delta;
-            // clamp da velocidade
             if (velX > CONST.MAX_SPEED) velX = CONST.MAX_SPEED;
             if (velX < -CONST.MAX_SPEED) velX = -CONST.MAX_SPEED;
         } else {
-            // aplicar atrito para reduzir a velocidade até 0
             if (velX > 0f) {
                 velX -= CONST.FRICTION * delta;
                 if (velX < 0f) velX = 0f;
@@ -79,76 +76,72 @@ public class Avatar extends Entity {
             }
         }
 
-        // pulo (W ou UP ou SPACE)
+        // pulo (W ou UP)
         boolean wantJump = CONST.UP_KEY();
 
         if (wantJump && isGrounded) {
-            // iniciar pulo
-            velY = CONST.JUMP_VELOCITY; // note: gravidade negativa pode exigir sinal trocado; ajuste conforme seu sistema
+            velocityY = CONST.JUMP_VELOCITY;  // ← MUDOU: velY → velocityY
             isGrounded = false;
             jumpAction = true;
             jumpTime = 0f;
         }
 
-        // pulo variável: enquanto segurado e jumpTime < maxJumpTime, reduz efeitos da gravidade
+        // pulo variável
         if (jumpAction) {
             jumpTime += delta;
             if (!wantJump || jumpTime > CONST.MAX_JUMP_TIME) {
                 jumpAction = false;
-            } else {
-                // Optional: aplicar um pequeno incremento para manter o impulso
-                // velY = Math.max(velY, CONST.JUMP_VELOCITY * 0.6f);
             }
         }
 
         // aplicar gravidade
-        velY += CONST.GRAVITY * delta;
+        velocityY += CONST.GRAVITY * delta;
 
         // calcular deslocamento
         float dx = velX * delta;
-        float dy = velY * delta;
+        float dy = velocityY * delta;
 
-        // movimentação com checagem de colisões por eixo (use seus arrays de walls)
-        // X axis
+        // X axis (movimento horizontal)
         float nextX = position.x + dx;
-        if (!collidesWithWalls(nextX, position.y, walls) && !collides(nextX, position.y, entities)) {
+        if (!collidesWithWalls(nextX, position.y) && !collides(nextX, position.y, entities)) {
             position.x = MathUtils.clamp(nextX, 0f, CONST.W_WORLD_SIZE - xSize);
         } else {
-            // colisão em X: zerar velocidade X e ajustar para encostar
             velX = 0f;
-            // para ajuste fino, pode iterar walls e posicionar colocação exata
         }
 
-        // Y axis
+        // Y axis (movimento vertical com gravidade)
         float nextY = position.y + dy;
-        if (!collidesWithWalls(position.x, nextY, walls) && !collides(position.x, nextY, entities)) {
+        if (!collidesWithWalls(position.x, nextY) && !collides(position.x, nextY, entities)) {
             position.y = MathUtils.clamp(nextY, 0f, CONST.H_WORLD_SIZE - ySize);
             isGrounded = false;
         } else {
-            // colisão vertical: vindo de cima -> pousou
-            if (velY < 0f) { // se velY negativo representa descida (ajuste conforme sinal)
+            // Colidiu com algo
+            if (velocityY < 0f) {  // ← MUDOU: velY → velocityY
                 isGrounded = true;
             }
-            velY = 0f;
-            // ajustar position.y para encostar na superfície:
-            for (Rectangle wall : walls) {
-                Rectangle nextBounds = new Rectangle(position.x + CONST.ANIMATED_OBJECT_MARGIN,
-                    nextY + CONST.ANIMATED_OBJECT_MARGIN,
-                    xSize - 2*CONST.ANIMATED_OBJECT_MARGIN,
-                    ySize - 2*CONST.ANIMATED_OBJECT_MARGIN);
-                if (nextBounds.overlaps(wall)) {
-                    // se estava caindo, encostar em cima do wall
-                    if (position.y >= wall.y + wall.height) {
-                        position.y = wall.y + wall.height - CONST.ANIMATED_OBJECT_MARGIN;
-                    } else {
-                        // ajuste para baixo (quando bate a cabeça)
-                        position.y = wall.y - ySize + CONST.ANIMATED_OBJECT_MARGIN;
+            velocityY = 0f;
+
+            // Ajustar para encostar na parede
+            if (worldMap != null) {  // ← PROTEÇÃO CONTRA NULL
+                Array<Rectangle> nearby = worldMap.getNeighbours(position.x, nextY, xSize, ySize);
+                for (Rectangle wall : nearby) {
+                    Rectangle nextBounds = new Rectangle(
+                        position.x,
+                        nextY,
+                        xSize,
+                        ySize
+                    );
+                    if (nextBounds.overlaps(wall)) {
+                        if (position.y >= wall.y + wall.height) {
+                            position.y = wall.y + wall.height;
+                        } else {
+                            position.y = wall.y - ySize;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
-
         updateBounds();
     }
     public void move(float _dx, float _dy, Array<Entity> entities) {
@@ -156,7 +149,7 @@ public class Avatar extends Entity {
         float nextY = position.y + _dy;
 
         // Checar colisão com paredes e entidades no eixo X
-        boolean collisionX = collidesWithWalls(nextX, position.y, walls) || collides(nextX, position.y, entities);
+        boolean collisionX = collidesWithWalls(nextX, position.y) || collides(nextX, position.y, entities);
         if (!collisionX) {
             position.x = MathUtils.clamp(nextX, 0f, CONST.W_WORLD_SIZE - this.tamanho);
         } else {
@@ -164,7 +157,7 @@ public class Avatar extends Entity {
         }
 
         // Checar colisão com paredes e entidades no eixo Y
-        boolean collisionY = collidesWithWalls(position.x, nextY, walls) || collides(position.x, nextY, entities);
+        boolean collisionY = collidesWithWalls(position.x, nextY) || collides(position.x, nextY, entities);
         if (!collisionY) {
             position.y = MathUtils.clamp(nextY, 0f, CONST.H_WORLD_SIZE - this.tamanho);
         } else {

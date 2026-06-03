@@ -50,7 +50,7 @@ public class Constants{
     public static final float  ACCELERATION = 7500f;
     public static final float MAX_SPEED = 300f;
     public static final float FRICTION = 5000f;
-    public static final float JUMP_VELOCITY = 500f;
+    public static final float JUMP_VELOCITY = (float) Math.sqrt(2f * 900f * (SCALE / 2f));
     public static final float MAX_JUMP_TIME = 0.50f;
     public static final int MAX_HEALTH = 100;
     public static final int MIN_HEALTH = 0;

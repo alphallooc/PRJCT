@@ -12,24 +12,29 @@ public abstract class Animals extends Entity {
     protected float dirX = 1f;
     protected float speed = CONST.MIN_SPEED;
     Animals(Vector2 _position, float _xSize, float _ySize ){
-        super(_position, _xSize, _ySize);
+        super(_position, Constants.SCALE, Constants.SCALE);
         this.position = _position;
         this.xSize = _xSize;
         this.ySize = _ySize;
     }
-    @Override public void update(float _update){
-        float nextX = position.x+dirX*speed*_update;
-        applyGravity(_update);
-        if(!isGrounded) return;
-        nextX = position.x + xSize;
-        if(collidesWithWalls(nextX, position.y, walls)){
-            dirX =-dirX;
+    @Override public void update(float _delta){
+        applyGravity(_delta);
+
+        if (!isGrounded) return;
+
+        float nextX = position.x + dirX * speed * _delta;
+
+        if (collidesWithWalls(nextX, position.y)) {          // ← era (..., walls)
+            dirX = -dirX;
             return;
         }
-        float ledgeCheckX = (dirX>0)? position.x+xSize+1    :   position.x-1;
-        boolean floorAhead = collidesWithWalls(ledgeCheckX, position.y-1, walls);
-        if(!floorAhead){
-            dirX =-dirX;
+
+        float ledgeCheckX = (dirX > 0)
+            ? position.x + xSize + 1
+            : position.x - 1;
+
+        if (!collidesWithWalls(ledgeCheckX, position.y - 1)) { // ← era (..., walls)
+            dirX = -dirX;
             return;
         }
         position.x=nextX;
@@ -142,202 +147,6 @@ public abstract class Animals extends Entity {
                 _renderer.circle(position.x + 1.05f * CONST.SCALE,
                     position.y + 0.55f * CONST.SCALE,
                     0.05f * CONST.SCALE);
-            }
-        }
-    }
-
-    public static abstract class Friendly extends Animals {
-        public Friendly(Vector2 _position, float _xSize, float _ySize) { super(_position, _xSize, _ySize); }
-        public static class Dog extends Friendly{
-            public Dog(Vector2 _position){super(_position, 1.2f,0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer){
-
-               //corpo
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize*CONST.SCALE,
-                    ySize*CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x+1.3f*CONST.SCALE,
-                    position.y, +0.35f*CONST.SCALE);
-
-                //orelhas
-                _renderer.setColor(CONST.DARK_GRAY_COLOR);
-                _renderer.triangle(position.x+1.4f*CONST.SCALE,
-                    position.y+0.6f*CONST.SCALE,
-                    position.x+1.5f*CONST.SCALE,
-                    position.y+0.9f*CONST.SCALE,
-                    position.x+1.6f*CONST.SCALE,
-                    position.y+0.6f*CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x+1.35f*CONST.SCALE,
-                    position.y+0.4f*CONST.SCALE,
-                    0.05f*CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x+1.37f*CONST.SCALE,
-                    position.y+0.4f*CONST.SCALE,
-                    0.02f*CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x+1.55f*CONST.SCALE,
-                    position.y+0.3f*CONST.SCALE,
-                    0.04f*CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-
-                // 🟫 Cauda
-                _renderer.triangle(
-                    position.x - 0.1f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    position.x - 0.3f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE,
-                    position.x,
-                    position.y + 0.5f * CONST.SCALE
-                );
-            }
-        }
-        public static class Cat extends Friendly{
-            public Cat(Vector2 _position){super(_position, 1.2f,0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer) {
-                //corpo
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize * CONST.SCALE,
-                    ySize * CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x + 1.3f * CONST.SCALE,
-                    position.y, +0.35f * CONST.SCALE);
-
-                //orelhas
-                _renderer.setColor(CONST.DARK_GRAY_COLOR);
-                _renderer.triangle(position.x + 1.4f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE,
-                    position.x + 1.5f * CONST.SCALE,
-                    position.y + 0.9f * CONST.SCALE,
-                    position.x + 1.6f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x + 1.35f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.05f * CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x + 1.37f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.02f * CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x + 1.55f * CONST.SCALE,
-                    position.y + 0.3f * CONST.SCALE,
-                    0.04f * CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-
-                //Cauda
-                _renderer.triangle(
-                    position.x - 0.1f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    position.x - 0.3f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE,
-                    position.x,
-                    position.y + 0.5f * CONST.SCALE
-                );
-            }
-        }
-        public static class Horse extends Friendly {
-            public Horse(Vector2 _position) {super(_position, 1.2f, 0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer) {
-                //corpo
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize * CONST.SCALE,
-                    ySize * CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x + 1.3f * CONST.SCALE,
-                    position.y, +0.35f * CONST.SCALE);
-
-                //orelhas
-                _renderer.setColor(CONST.DARK_GRAY_COLOR);
-                _renderer.triangle(position.x + 1.4f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE,
-                    position.x + 1.5f * CONST.SCALE,
-                    position.y + 0.9f * CONST.SCALE,
-                    position.x + 1.6f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x + 1.35f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.05f * CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x + 1.37f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.02f * CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x + 1.55f * CONST.SCALE,
-                    position.y + 0.3f * CONST.SCALE,
-                    0.04f * CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
             }
         }
     }
@@ -501,163 +310,6 @@ public abstract class Animals extends Entity {
 
                 //pernas
                 _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-            }
-        }
-    }
-
-    public static abstract class Neutral extends Animals {
-         Neutral (Vector2 _position, float _xSize, float _ySize) { super(_position, _xSize, _ySize); }
-        public static class Rabbit extends Neutral {
-            public Rabbit(Vector2 _position) {super(_position, 1.2f, 0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer) {
-                //corpo
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize * CONST.SCALE,
-                    ySize * CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x + 1.3f * CONST.SCALE,
-                    position.y, +0.35f * CONST.SCALE);
-
-                //orelhas
-                _renderer.setColor(CONST.DARK_GRAY_COLOR);
-                _renderer.triangle(position.x + 1.4f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE,
-                    position.x + 1.5f * CONST.SCALE,
-                    position.y + 0.9f * CONST.SCALE,
-                    position.x + 1.6f * CONST.SCALE,
-                    position.y + 0.6f * CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x + 1.35f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.05f * CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x + 1.37f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.02f * CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x + 1.55f * CONST.SCALE,
-                    position.y + 0.3f * CONST.SCALE,
-                    0.04f * CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.GRAY_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-            }
-        }
-        public static class Turtle extends Neutral {
-            public Turtle(Vector2 _position) {super(_position, 1.2f, 0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer) {
-                //corpo
-                _renderer.setColor(CONST.GREEN_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize * CONST.SCALE,
-                    ySize * CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x + 1.3f * CONST.SCALE,
-                    position.y, +0.35f * CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x + 1.35f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.05f * CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x + 1.37f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.02f * CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x + 1.55f * CONST.SCALE,
-                    position.y + 0.3f * CONST.SCALE,
-                    0.04f * CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.GREEN_COLOR);
-                _renderer.rect(position.x + 0.2f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.5f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-                _renderer.rect(position.x + 0.8f * CONST.SCALE,
-                    position.y - 0.2f * CONST.SCALE,
-                    0.1f * CONST.SCALE,
-                    0.2f * CONST.SCALE);
-            }
-        }
-        public static class Bird extends Neutral {
-            public Bird(Vector2 _position) {super(_position, 1.2f, 0.5f);}
-
-            @Override public void draw(ShapeRenderer _renderer) {
-                //corpo
-                _renderer.setColor(CONST.YELLOW_COLOR);
-                _renderer.rect(position.x,
-                    position.y,
-                    xSize * CONST.SCALE,
-                    ySize * CONST.SCALE);
-
-                //cabeça
-                _renderer.circle(position.x + 1.3f * CONST.SCALE,
-                    position.y, +0.35f * CONST.SCALE);
-
-                //olhos
-                _renderer.setColor(CONST.WHITE_COLOR);
-                _renderer.circle(position.x + 1.35f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.05f * CONST.SCALE);
-
-                //pupila
-                _renderer.setColor(CONST.BLACK_COLOR);
-                _renderer.circle(position.x + 1.37f * CONST.SCALE,
-                    position.y + 0.4f * CONST.SCALE,
-                    0.02f * CONST.SCALE);
-
-                //nariz
-                _renderer.circle(position.x + 1.55f * CONST.SCALE,
-                    position.y + 0.3f * CONST.SCALE,
-                    0.04f * CONST.SCALE);
-
-                //pernas
-                _renderer.setColor(CONST.YELLOW_COLOR);
                 _renderer.rect(position.x + 0.2f * CONST.SCALE,
                     position.y - 0.2f * CONST.SCALE,
                     0.1f * CONST.SCALE,

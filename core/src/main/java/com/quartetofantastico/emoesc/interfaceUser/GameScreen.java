@@ -12,21 +12,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import com.quartetofantastico.emoesc.world.Animals;
 import com.quartetofantastico.emoesc.world.Avatar;
-import com.quartetofantastico.emoesc.world.WallStructs;
+import com.quartetofantastico.emoesc.world.WorldMap;
 
 public class GameScreen implements Screen {
     Constants CONST = new Constants();
     Animals.Hostil.Tiger tiger;
     Animals.Hostil.Crocodile crocodile;
     Animals.Hostil.Leopard leopard;
-
-    Animals.Friendly.Cat cat;
-    Animals.Friendly.Horse horse;
-    Animals.Friendly.Dog dog;
-
-    Animals.Neutral.Bird bird;
-    Animals.Neutral.Rabbit rabbit;
-    Animals.Neutral.Turtle turtle;
 
     Animals.Restricted.Gorilla gorilla;
     Animals.Restricted.Elephant elephant;
@@ -36,7 +28,7 @@ public class GameScreen implements Screen {
     private ShapeRenderer render;
     private SpriteBatch batch;
     private Avatar avatar;
-    private Array<Rectangle> walls;
+    private WorldMap worldMap;
 
 
     private OrthographicCamera camera;
@@ -51,15 +43,25 @@ public class GameScreen implements Screen {
         render = new ShapeRenderer();
         batch = new SpriteBatch();
 
-        avatar = new Avatar("Player", new Vector2(CONST.W_WORLD_SIZE / 2f, CONST.H_WORLD_SIZE / 2f));
+        avatar = new Avatar("Player", new Vector2(100, 500));
         tiger = new Animals.Hostil.Tiger(new Vector2((CONST.W_WORLD_SIZE / 2)-100, (CONST.H_WORLD_SIZE / 3)-100));
         crocodile = new Animals.Hostil.Crocodile(new Vector2((CONST.W_WORLD_SIZE / 2)-150, (CONST.H_WORLD_SIZE /2)-150));
         leopard = new Animals.Hostil.Leopard(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
-        dog = new Animals.Friendly.Dog(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
         giraffe = new Animals.Restricted.Giraffe(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
 
-        walls = WallStructs.loadFromFile("Worlds/World0.txt", CONST.SCALE);
-        avatar.setWalls(walls);
+        // show():
+        worldMap = WorldMap.load("Worlds/World0.txt", CONST.SCALE);
+        avatar.setWorldMap(worldMap);
+        tiger.setWorldMap(worldMap);
+// etc.
+
+// render() — draw do mundo antes das entidades:
+        render.begin(ShapeRenderer.ShapeType.Filled);
+        worldMap.draw(render);
+        crocodile.draw(render);
+        tiger.draw(render);
+        avatar.draw(render);
+        render.end();
     }
 
     @Override
@@ -86,11 +88,8 @@ public class GameScreen implements Screen {
 
         render.begin(ShapeRenderer.ShapeType.Filled);
         // desenhar paredes aqui (se quiser vê-las)
-        if (walls != null) {
-            render.setColor(CONST.GRAY_COLOR);
-            for (Rectangle w : walls) {
-                render.rect(w.x, w.y, w.width, w.height);
-            }
+        if (worldMap != null) {
+            worldMap.draw(render);
         }
 
         crocodile.draw(render);
