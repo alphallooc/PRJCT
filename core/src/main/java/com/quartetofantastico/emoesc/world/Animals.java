@@ -5,20 +5,82 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
 import com.quartetofantastico.emoesc.logicAndMechanic.Entity;
+import java.util.Random;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Rectangle;
 
 public abstract class Animals extends Entity {
     Constants CONST = new Constants();
     Rectangle bounds;
 
-    Animals(Vector2 _position, float _xSize, float _ySize ){
+    Animals(Vector2 _position, float _xSize, float _ySize) {
         super(_position, _xSize, _ySize);
         this.position = _position;
         this.xSize = _xSize;
         this.ySize = _ySize;
+        this.bounds = new Rectangle(_position.x, _position.y, _xSize * CONST.SCALE, _ySize * CONST.SCALE);
+
+        Random random = new Random();
+        int dir = random.nextInt(4);
+        switch (dir) {
+            case 0: dirX = 1;  dirY = 0;  break;
+            case 1: dirX = -1; dirY = 0;  break;
+            case 2: dirX = 0;  dirY = 1;  break;
+            case 3: dirX = 0;  dirY = -1; break;
+        }
     }
 
-    @Override public void updateBounds(){bounds.setPosition(position.x+CONST.ANIMATED_OBJECT_MARGIN, position.y+CONST.ANIMATED_OBJECT_MARGIN);}
-    @Override public void update(float _update){}
+    public float velocidade = 80f;
+    public float dirX = 1f, dirY = 0f;
+    private Random random = new Random();
+    public Array<Rectangle> walls = new Array<>();
+    float tamanho;
+
+    @Override
+    public void updateBounds() {
+        bounds.setPosition(position.x, position.y);
+    }
+
+    @Override
+    public void update(float delta) {
+        tamanho = xSize * CONST.SCALE;
+        float nextX = position.x + dirX * velocidade * delta;
+        float nextY = position.y + dirY * velocidade * delta;
+        Rectangle nextBounds = new Rectangle(nextX, nextY, tamanho, tamanho);
+        boolean colide = false;
+        for (Rectangle wall : walls) {
+            if (nextBounds.overlaps(wall)) { colide = true; break; }
+        }
+        if (!colide) {
+            position.x = nextX;
+            position.y = nextY;
+        } else {
+            int tentativas = 0;
+            do {
+                int dir = random.nextInt(4);
+                switch (dir) {
+                    case 0: dirX = 1;  dirY = 0;  break;
+                    case 1: dirX = -1; dirY = 0;  break;
+                    case 2: dirX = 0;  dirY = 1;  break;
+                    case 3: dirX = 0;  dirY = -1; break;
+                }
+                nextX = position.x + dirX * velocidade * delta;
+                nextY = position.y + dirY * velocidade * delta;
+                nextBounds = new Rectangle(nextX, nextY, tamanho, tamanho);
+                colide = false;
+                for (Rectangle wall : walls) {
+                    if (nextBounds.overlaps(wall)) { colide = true; break; }
+                }
+                tentativas++;
+            } while (colide && tentativas < 10);
+            if (!colide) {
+                position.x = nextX;
+                position.y = nextY;
+            }
+        }
+        updateBounds();
+    }
+
 
     public static abstract class Hostil extends Animals {
         Hostil(Vector2 _position, float _xSize, float _ySize){super(_position, _xSize, _ySize);}

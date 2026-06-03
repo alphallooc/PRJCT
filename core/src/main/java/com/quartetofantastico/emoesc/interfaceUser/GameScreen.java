@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.quartetofantastico.emoesc.logicAndMechanic.Constants;
@@ -14,9 +15,11 @@ import com.quartetofantastico.emoesc.world.Avatar;
 
 import com.badlogic.gdx.utils.Array;
 import com.quartetofantastico.emoesc.world.Frutas;
+import com.quartetofantastico.emoesc.world.WallStructs;
 
 
 public class GameScreen implements Screen {
+    Array<Rectangle> walls;
     BitmapFont font = new BitmapFont();
     OrthographicCamera hudCamera;
     Array<Frutas> frutas = new Array<>();
@@ -54,19 +57,20 @@ public class GameScreen implements Screen {
         //render.setAutoShapeType(true);
         batch = new SpriteBatch();
 
-        avatar = new Avatar("Player", new Vector2(CONST.W_WORLD_SIZE / 2, CONST.H_WORLD_SIZE / 2));
-        tiger = new Animals.Hostil.Tiger(new Vector2(CONST.W_WORLD_SIZE/2 + 60, CONST.H_WORLD_SIZE/2));
-        crocodile = new Animals.Hostil.Crocodile(new Vector2(CONST.W_WORLD_SIZE/2 - 60, CONST.H_WORLD_SIZE/2));
-        leopard = new Animals.Hostil.Leopard(new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 + 60));
-        dog = new Animals.Friendly.Dog(new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
+        avatar = new Avatar("Player", new Vector2(55, 900));
+        tiger = new Animals.Hostil.Tiger(new Vector2(200, 950));
+        crocodile = new Animals.Hostil.Crocodile(new Vector2(200, 400));
+        leopard = new Animals.Hostil.Leopard(new Vector2(800, 950));
+        dog = new Animals.Friendly.Dog(new Vector2(1000, 400));
+        giraffe = new Animals.Restricted.Giraffe(new Vector2(600, 200));
 
-        giraffe = new Animals.Restricted.Giraffe (new Vector2((CONST.W_WORLD_SIZE/2)-200, (CONST.H_WORLD_SIZE/2)-200));
+
         camera.setToOrtho(false, CONST.W_SCREEN, CONST.H_SCREEN);
 
-        frutas.add(new Frutas(Frutas.FruitType.MAÇA,   new Vector2(CONST.W_WORLD_SIZE/2 + 200, CONST.H_WORLD_SIZE/2)));
-        frutas.add(new Frutas(Frutas.FruitType.BANANA,  new Vector2(CONST.W_WORLD_SIZE/2 - 200, CONST.H_WORLD_SIZE/2)));
-        frutas.add(new Frutas(Frutas.FruitType.LARANJA, new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 + 200)));
-        frutas.add(new Frutas(Frutas.FruitType.UVA,     new Vector2(CONST.W_WORLD_SIZE/2, CONST.H_WORLD_SIZE/2 - 200)));
+        frutas.add(new Frutas(Frutas.FruitType.MAÇA,    new Vector2(400, 950)));
+        frutas.add(new Frutas(Frutas.FruitType.BANANA,   new Vector2(600, 400)));
+        frutas.add(new Frutas(Frutas.FruitType.LARANJA,  new Vector2(1000, 200)));
+        frutas.add(new Frutas(Frutas.FruitType.UVA,      new Vector2(800, 600)));
 
         hudCamera = new OrthographicCamera();
         hudCamera.setToOrtho(false, CONST.W_SCREEN, CONST.H_SCREEN);
@@ -76,6 +80,14 @@ public class GameScreen implements Screen {
         avatar.entities.add(leopard);
         avatar.entities.add(dog);
         avatar.entities.add(giraffe);
+
+        walls = WallStructs.loadFromFile("maze.txt");
+        avatar.walls = walls;
+        tiger.walls = walls;
+        crocodile.walls = walls;
+        leopard.walls = walls;
+        dog.walls = walls;
+        giraffe.walls = walls;
     }
 
     @Override
@@ -129,8 +141,10 @@ public class GameScreen implements Screen {
                 fruta.draw(render);
             }
         }
-
-
+        render.setColor(CONST.GRAY_COLOR);        // ← adiciona aqui
+        for (Rectangle wall : walls) {            // ← adiciona aqui
+            render.rect(wall.x, wall.y, wall.width, wall.height);  // ← adiciona aqui
+        }                                         // ← adiciona aqui
         avatar.draw(render);
         render.end();
 
@@ -141,6 +155,7 @@ public class GameScreen implements Screen {
         render.rect(leopard.getBounds().x, leopard.getBounds().y, leopard.getBounds().width, leopard.getBounds().height);
         render.setColor(CONST.GREEN_COLOR);
         render.rect(avatar.getBounds().x, avatar.getBounds().y, avatar.getBounds().width, avatar.getBounds().height);
+        render.setColor(CONST.GRAY_COLOR);
         render.end();
 
         batch.setProjectionMatrix(hudCamera.combined);
