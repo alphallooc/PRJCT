@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Constants{
     public static final int[][] Stage = new int[3][5];
-    public static final float W_WORLD_SIZE=1920;
-    public static final float H_WORLD_SIZE=1080;
+    public static float W_WORLD_SIZE=1920;
+    public static float H_WORLD_SIZE=1080;
 
     //Cores{
     public static final Color WHITE_COLOR = Color.WHITE;

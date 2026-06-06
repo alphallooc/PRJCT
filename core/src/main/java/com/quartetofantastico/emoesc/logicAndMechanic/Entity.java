@@ -28,7 +28,10 @@ public abstract class Entity{
     public float getVector2PositionY(){
         return position.y;
     }
-    public abstract void update(float delta);
+
+    public void update(float delta) {
+    }
+
     public abstract void draw (ShapeRenderer _renderer);
 
     public void updateBounds(){bounds.setPosition(position.x+CONST.ANIMATED_OBJECT_MARGIN, position.y+CONST.ANIMATED_OBJECT_MARGIN);}

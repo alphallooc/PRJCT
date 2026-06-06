@@ -1,4 +1,5 @@
 package com.quartetofantastico.emoesc.interfaceUser;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,7 +17,15 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class MenuScreen implements Screen{
+    private final Game game;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
+    Skin skin;
+
     Dialog dialogCreditos;
+    Dialog dialogJogar;
     Texture fundoMenu;
     SpriteBatch batch;
     BitmapFont font;
@@ -33,13 +42,14 @@ public class MenuScreen implements Screen{
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        skin = new Skin();
         batch = new SpriteBatch();
         font = new BitmapFont();
         fundoMenu = new Texture(Gdx.files.internal("ui/fundo_menu.jpeg"));
         stage = new Stage(viewport, batch);
         Gdx.input.setInputProcessor(stage);
         Pixmap pixmap= new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1, 0, 0, 1);
+        pixmap.setColor(0.0f, 0.4f, 0.0f, 1f);
         pixmap.fill();
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
@@ -57,13 +67,22 @@ public class MenuScreen implements Screen{
         table.add(btnDefinicoes).pad(10).width(200).height(50).row();
         table.add(btnSair).pad(10).width(200).height(50).row();
         stage.addActor(table);
-        Skin skin = new Skin();
+
         skin.add("default-font", font);
         skin.add("white", texture);
 
+        style.up = new TextureRegionDrawable(texture);
+        style.font = font;
+        style.fontColor = com.badlogic.gdx.graphics.Color.WHITE; // ← adiciona
+
         Window.WindowStyle windowStyle = new Window.WindowStyle();
         windowStyle.titleFont = font;
-        windowStyle.background = new TextureRegionDrawable(texture);
+        Pixmap pixmapVerde = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmapVerde.setColor(0.0f, 0.25f, 0.0f, 1f);
+        pixmapVerde.fill();
+        Texture texturaVerde = new Texture(pixmapVerde);
+        pixmapVerde.dispose();
+        windowStyle.background = new TextureRegionDrawable(texturaVerde);
         skin.add("default", windowStyle);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -76,9 +95,24 @@ public class MenuScreen implements Screen{
 
         dialogCreditos = new Dialog("Créditos", skin);
         dialogCreditos.getContentTable().pad(15);
-        dialogCreditos.text("Desenvolvido por: Swaee");
+        dialogCreditos.text("Desenvolvido por: \nAlberto Mussaka\nAdriano Jorge   -   Alphalloc");
         dialogCreditos.getButtonTable().pad(10);
         dialogCreditos.button("  Fechar  ");
+
+        dialogJogar = new Dialog("Escolha o seu avatar",skin);
+        dialogJogar.getTitleLabel().setAlignment(com.badlogic.gdx.utils.Align.center);
+        dialogJogar.getTitleLabel().setFontScale(1.5f);
+        dialogJogar.getTitleTable().padTop(20f);
+        Table tableaDosAvatares = new Table();
+        tableaDosAvatares.add(criarAvatar("Ninja", "ui/Images2.0/background/ninja0.png")).pad(20);
+        tableaDosAvatares.add(criarAvatar("Polícia", "ui/Images2.0/background/police0.png")).pad(20);
+        tableaDosAvatares.add(criarAvatar("Estudante", "ui/Images2.0/background/student0.jpg")).pad(20);
+
+        dialogJogar.getContentTable().add(tableaDosAvatares);
+
+        dialogJogar.getContentTable().pad(15);
+        dialogJogar.getButtonTable().pad(10);
+        dialogJogar.button("Fechar");
 
         btnCreditos.addListener(new ClickListener(){
            @Override
@@ -90,6 +124,19 @@ public class MenuScreen implements Screen{
                    Gdx.graphics.getHeight() / 2f - dialogCreditos.getHeight() / 2f
                );
            }
+        });
+
+
+        btnJogar.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                dialogJogar.show(stage);
+                dialogJogar.setSize(Gdx.graphics.getWidth() * 0.6f, Gdx.graphics.getHeight() * 0.6f);
+                dialogJogar.setPosition(
+                    Gdx.graphics.getWidth() / 2f - dialogJogar.getWidth() / 2f,
+                    Gdx.graphics.getHeight() / 2f - dialogJogar.getHeight() / 2f
+                );
+            }
         });
 
         btnJogar.addListener(new InputListener() {
@@ -140,6 +187,28 @@ public class MenuScreen implements Screen{
             }
 
         });
+    }
+
+    private Table criarAvatar(String nome, String caminhoImagem){
+        Table div = new Table();
+
+        Texture text = new Texture(Gdx.files.internal(caminhoImagem));
+        Image img = new Image(new TextureRegionDrawable(text));
+
+        Label lbl = new Label(nome, skin);
+        lbl.setAlignment(com.badlogic.gdx.utils.Align.center);
+
+        div.add(img).width(200).height(200).row();
+        div.add(lbl).center(); // ← adiciona .center()
+
+        div.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                dialogJogar.hide();
+                game.setScreen(new GameScreen(game));
+            }
+        });
+        return div;
     }
 
     @Override

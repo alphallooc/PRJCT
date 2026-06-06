@@ -19,7 +19,7 @@ public class Home extends Game{
        //batch = new SpriteBatch();
         //font=new BitmapFont();
         //image = new Texture("libgdx.png");
-        setScreen(new GameScreen());
+        setScreen(new OpScreen(this));
     }
 
     @Override

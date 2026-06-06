@@ -36,7 +36,8 @@ public class OpScreen implements Screen {
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        mainImage = new Texture(Gdx.files.internal("ui/menu_principal.png"));
+        // Tente isto só para testar se ele encontra algum ficheiro na raiz da pasta ui
+        mainImage = new Texture(Gdx.files.internal("ui/intro.png"));
         spinnerAngle = 0;
         spinnerRadius = 50;
         elapsedTime = 0;
@@ -57,7 +58,7 @@ public class OpScreen implements Screen {
 
         elapsedTime += delta;
         if (elapsedTime > 3){
-            game.setScreen(new MenuScreen());
+            game.setScreen(new MenuScreen(game));
         }
     }
     public OpScreen(Home game){
